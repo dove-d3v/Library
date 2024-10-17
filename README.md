@@ -10,22 +10,12 @@ This Library Management System is a simple console-based application that allows
 - **Display Books**: View all available books along with their details.
 - **Issue Books**: Issue a book to a student if copies are available.
 - **Return Books**: Return an issued book back to the library.
-- **Separation of Concerns**: The project is structured into a client (student) and server (management staff) architecture.
 
 ## Technologies Used
 
 - C++
 - Standard Template Library (STL)
 - Object-Oriented Programming (OOP) principles
-
-## Getting Started
-
-### Prerequisites
-
-Make sure you have the following installed on your machine:
-
-- A C++ compiler (e.g., g++, clang++)
-- Make (optional, for easier building)
 
 ### Installation
 
