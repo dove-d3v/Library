@@ -1,3 +1,10 @@
+/*
+==============================================
+          Library Management System
+  Github: https://github.com/dove-d3v/Library
+        Created by: Soumitra Yadav
+==============================================
+*/
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -8,9 +15,8 @@ class Book {
 private:
   // Unique identifier for the book
   int id;
-  // Title of the book
+  // Title and Author
   std::string title;
-  // Author of the book
   std::string author;
   // Status of whether the book is issued
   bool isIssued;
@@ -46,14 +52,14 @@ public:
   Student(std::string name, int id) : name(name), id(id) {}
 
   // Method to issue a book to the student
-  void issueBook(Book book) {
-    if (book.isAvailable()) {
-      book.issueBook();            // Issue the book if available
+  void issueBook(Book *book) {
+    if (book->isAvailable()) {
+      book->issueBook();           // Issue the book if available
       issuedBooks.push_back(book); // Keep track of the issued book
-      std::cout << "Book issued: " << book.getTitle() << " to " << name
+      std::cout << "Book issued: " << book->getTitle() << " to " << name
                 << std::endl;
     } else {
-      std::cout << "No copies available for: " << book.getTitle() << std::endl;
+      std::cout << "No copies available for: " << book->getTitle() << std::endl;
     }
   }
 
@@ -64,7 +70,9 @@ public:
       std::cout << "Enter book Id to return: ";
       int bId;
       std::cin >> bId;
-      issuedBooks[bId].returnBook(); // Return the selected book
+      issuedBooks[bId - 1]->returnBook(); // Return the selected book
+      std::cout << "Book Returned : " << issuedBooks[bId - 1]->getTitle()
+                << std::endl;
     } else {
       std::cout << "No book issued to return." << std::endl;
     }
@@ -77,8 +85,8 @@ public:
                 << std::left << "Title" << std::setw(25) << std::left
                 << "Author" << std::setw(15) << std::endl;
       for (auto &book : issuedBooks) {
-        std::cout << std::setw(5) << book.getId() << std::setw(30)
-                  << book.getTitle() << std::setw(25) << book.getAuthor()
+        std::cout << std::setw(5) << book->getId() << std::setw(30)
+                  << book->getTitle() << std::setw(25) << book->getAuthor()
                   << std::endl;
       }
     } else {
@@ -92,14 +100,17 @@ private:
   // Unique identifier for the student
   int id;
   // List of books issued to the student
-  std::vector<Book> issuedBooks;
+  std::vector<Book *> issuedBooks;
 };
 
 // Class representing the library
 class Library {
 public:
   // Method to add a book to the library
-  void addBook(Book book) { books.push_back(book); }
+  void addBook(Book book) {
+    Book *pbook = new Book(book);
+    books.push_back(pbook);
+  }
 
   // Method to display all available books in the library
   void displayBooks() {
@@ -111,26 +122,26 @@ public:
 
     // Loop through books to display their details
     for (auto &book : books) {
-      std::cout << std::setw(5) << book.getId() << std::setw(30)
-                << book.getTitle() << std::setw(25) << book.getAuthor()
-                << std::setw(15) << (book.isAvailable() ? "Yes" : "No")
+      std::cout << std::setw(5) << book->getId() << std::setw(30)
+                << book->getTitle() << std::setw(25) << book->getAuthor()
+                << std::setw(15) << (book->isAvailable() ? "Yes" : "No")
                 << std::endl;
     }
   }
 
   // Method to find a book by its ID
-  Book findBookById(int id) {
+  Book *findBookById(int id) {
     for (auto &book : books) {
-      if (book.getId() == id) {
+      if (book->getId() == id) {
         return book; // Return the found book
       }
     }
-    return books[0]; // Return the first book if not found (could be improved)
+    return books[0]; // Return the first book if not found
   }
 
 private:
   // List of books in the library
-  std::vector<Book> books;
+  std::vector<Book *> books;
 };
 
 // Function to display the menu options
@@ -191,9 +202,9 @@ int main() {
     case 3: {
       int bookId;
       std::cout << "Enter Book ID to issue: ";
-      std::cin >> bookId;                       // Get book ID to issue
-      Book book = library.findBookById(bookId); // Find book by ID
-      if (book.isAvailable()) {
+      std::cin >> bookId;                        // Get book ID to issue
+      Book *book = library.findBookById(bookId); // Find book by ID
+      if (book->isAvailable()) {
         student.issueBook(book); // Issue book to student
       } else {
         std::cout << "Book not found.\n"; // Handle book not found
